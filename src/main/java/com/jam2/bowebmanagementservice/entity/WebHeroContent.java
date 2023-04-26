@@ -1,0 +1,60 @@
+package com.jam2.bowebmanagementservice.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.UUID;
+
+@Entity
+@Table(name="web_hero_content")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class WebHeroContent implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID webHeroId;
+
+    @Column(name = "image_url", length = 255)
+    private String imageUrl;
+
+    @Column(name = "title", length = 255)
+    private String title;
+
+    @Column(name = "description", columnDefinition = "LONGTEXT")
+    private String description;
+
+    @Column(name = "created_by", length = 100)
+    private String createdBy;
+
+    @Column(name = "updated_by", length = 100)
+    private String updatedBy;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_web_id")
+    private UserWebRelation userWebRelation;
+
+
+
+
+
+
+}
