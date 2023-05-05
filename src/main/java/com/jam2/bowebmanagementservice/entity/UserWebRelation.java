@@ -31,6 +31,8 @@ public class UserWebRelation implements Serializable {
     private AuthAccount authAccount;
 
     private UUID webHeroId;
+    private UUID webAboutId;
+    private UUID webPortfolioId;
 
 
 }

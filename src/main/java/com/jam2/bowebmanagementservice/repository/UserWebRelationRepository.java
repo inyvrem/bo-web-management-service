@@ -9,5 +9,7 @@ import java.util.UUID;
 @Repository
 public interface UserWebRelationRepository extends JpaRepository<UserWebRelation, UUID> {
 
-    UserWebRelation findByAuthId(UUID authId);
+    UserWebRelation findByAuthAccountAuthId(UUID authId);
+
+    UserWebRelation findByUserWebId(UUID userWebId);
 }

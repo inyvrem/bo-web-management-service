@@ -27,19 +27,19 @@ public class WebHeroContent implements Serializable {
     @Column(columnDefinition = "BINARY(16)")
     private UUID webHeroId;
 
-    @Column(name = "image_url", length = 255)
+    @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "title", length = 255)
+    @Column(name = "title")
     private String title;
 
     @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
 
-    @Column(name = "created_by", length = 100)
+    @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "updated_by", length = 100)
+    @Column(name = "updated_by")
     private String updatedBy;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -48,13 +48,7 @@ public class WebHeroContent implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_web_id")
-    private UserWebRelation userWebRelation;
-
-
-
-
-
+    @Column(name = "user_web_id")
+    private UUID userWebId;
 
 }
