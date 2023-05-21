@@ -12,4 +12,6 @@ public interface WebHeroContentRepository extends JpaRepository<WebHeroContent, 
     WebHeroContent findByUserWebId(UUID authId);
 
     WebHeroContent findByWebHeroId(UUID webHeroId);
+
+    WebHeroContent findByWebHeroIdAndSectionStatus(UUID webHeroId,Integer sectionStatus);
 }

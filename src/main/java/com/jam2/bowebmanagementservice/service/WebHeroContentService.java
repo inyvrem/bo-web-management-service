@@ -1,13 +1,14 @@
 package com.jam2.bowebmanagementservice.service;
 
 import com.jam2.bowebmanagementservice.constant.SystemConstants;
-import com.jam2.bowebmanagementservice.entity.UserWebRelation;
 import com.jam2.bowebmanagementservice.entity.WebHeroContent;
 import com.jam2.bowebmanagementservice.model.WebHeroContentRequest;
 import com.jam2.bowebmanagementservice.model.WebHeroContentResponse;
 import com.jam2.bowebmanagementservice.model.WebIdResponse;
 import com.jam2.bowebmanagementservice.repository.UserWebRelationRepository;
 import com.jam2.bowebmanagementservice.repository.WebHeroContentRepository;
+import com.jam2.bowebmanagementservice.util.DateTimeUtil;
+import com.jam2.bowebmanagementservice.util.StringCheckUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +25,13 @@ import java.util.UUID;
 public class WebHeroContentService {
 
     private final WebHeroContentRepository webHeroContentRepository;
-    private final UserWebRelationRepository userWebRelationRepository;
+    private final DateTimeUtil dateTimeUtil;
+    private final StringCheckUtil stringCheckUtil;
 
-    public WebHeroContentService(WebHeroContentRepository webHeroContentRepository, UserWebRelationRepository userWebRelationRepository) {
+    public WebHeroContentService(WebHeroContentRepository webHeroContentRepository, DateTimeUtil dateTimeUtil, StringCheckUtil stringCheckUtil) {
         this.webHeroContentRepository = webHeroContentRepository;
-        this.userWebRelationRepository = userWebRelationRepository;
+        this.dateTimeUtil = dateTimeUtil;
+        this.stringCheckUtil = stringCheckUtil;
     }
 
     public WebIdResponse getWebHeroId(String userWebId){
@@ -42,7 +45,7 @@ public class WebHeroContentService {
         return resp;
     }
 
-    public WebHeroContentResponse getUserWebDetail(String webHeroId){
+    public WebHeroContentResponse getWebHeroContentDetail(String webHeroId){
         WebHeroContentResponse resp = new WebHeroContentResponse();
         WebHeroContent webHeroContent = webHeroContentRepository.findByWebHeroId(UUID.fromString(webHeroId));
 
@@ -53,20 +56,22 @@ public class WebHeroContentService {
         return resp;
     }
 
-    public WebHeroContentResponse createWebHeroContentDetails(WebHeroContentRequest webHeroContentRequest){
+    public WebHeroContentResponse updateWebHeroContentDetail(WebHeroContentRequest webHeroContentRequest){
         WebHeroContentResponse resp = new WebHeroContentResponse();
-        WebHeroContent webHeroContent = new WebHeroContent();
+        WebHeroContent webHeroContent = webHeroContentRepository.findByWebHeroId(UUID.fromString(webHeroContentRequest.getWebHeroId()));
 
-//        UserWebRelation userWebRelation = userWebRelationRepository.findByAuthAccountAuthId();
+        if(null == webHeroContent){
+           // throw
+        }
 
-//        if(null == webHeroContent){
-//            webHeroContent.setTitle(webHeroContentRequest.getTitle() == null ? SystemConstants.TITLE : webHeroContentRequest.getTitle());
-//            webHeroContent.setDescription();
-//            webHeroContent.setImageUrl();
-//            webHeroContent.setCreatedBy();
-//            webHeroContent.setCreatedDate();
-//            webHeroContent.setUserWebRelation();
-//        }
+        webHeroContent.setTitle(stringCheckUtil.isStringNEB(webHeroContentRequest.getTitle()) ? webHeroContent.getTitle() : webHeroContentRequest.getTitle());
+        webHeroContent.setDescription(stringCheckUtil.isStringNEB(webHeroContentRequest.getDescription()) ? webHeroContent.getDescription(): webHeroContentRequest.getDescription());
+        webHeroContent.setImageUrl( stringCheckUtil.isStringNEB(webHeroContentRequest.getImageUrl()) ? webHeroContent.getImageUrl() : webHeroContentRequest.getImageUrl());
+        webHeroContent.setUpdatedBy("user"); // add token user
+        webHeroContent.setUpdatedDate(dateTimeUtil.now());
+        webHeroContentRepository.save(webHeroContent);
+
+        BeanUtils.copyProperties(webHeroContent,resp);
 
         return resp;
     }

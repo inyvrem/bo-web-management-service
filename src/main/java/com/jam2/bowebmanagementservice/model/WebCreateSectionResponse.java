@@ -5,20 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashMap;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WebSectionListResponse implements Serializable {
+public class WebCreateSectionResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String authId;
     private String username;
-    private String webHeroContent;
-    private String webAboutContent;
-    private String webPortfolioContent;
-    private String webServiceContent;
+    private HashMap<String,Object> sectionList;
 }

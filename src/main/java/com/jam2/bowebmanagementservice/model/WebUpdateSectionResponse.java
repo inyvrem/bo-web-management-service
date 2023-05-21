@@ -6,18 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WebSectionListRequest implements Serializable {
+public class WebUpdateSectionResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String userWebId;
-    private Boolean webHeroContent;
-    private Boolean webAboutContent;
-    private Boolean webPortfolioContent;
-    private Boolean webServiceContent;
+    private String authId;
+    private String username;
+    private HashMap<String,Object> sectionList;
 }

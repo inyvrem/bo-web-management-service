@@ -5,6 +5,8 @@ import com.jam2.bowebmanagementservice.service.WebManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value ="back-office")
 public class WebManagementController {
@@ -33,18 +35,23 @@ public class WebManagementController {
         return ResponseEntity.ok(userWebIdResponse);
     }
 
-    @PostMapping(value ="/admin/web-manage/section-list")
-    public ResponseEntity<?> createUserSectionList(@RequestBody WebSectionListRequest webHeroContentRequest){
-        WebSectionListResponse webSectionListResponse = webManagementService.createUserSectionList(webHeroContentRequest);
-        return ResponseEntity.ok(webSectionListResponse);
+    @PostMapping(value ="/admin/web-manage/section-list/create")
+    public ResponseEntity<?> createUserSectionList(@Valid @RequestBody WebCreateSectionRequest webCreateSectionRequest){
+        WebCreateSectionResponse webCreateSectionResponse = webManagementService.createSectionList(webCreateSectionRequest);
+        return ResponseEntity.ok(webCreateSectionResponse);
+    }
+
+    @PostMapping(value ="/admin/web-manage/section-list/update")
+    public ResponseEntity<?> updateUserSectionList(@Valid @RequestBody WebUpdateSectionRequest webUpdateSectionRequest){
+        WebUpdateSectionResponse webUpdateSectionResponse = webManagementService.updateSectionList(webUpdateSectionRequest);
+        return ResponseEntity.ok(webUpdateSectionResponse);
     }
 
     @GetMapping(value ="/admin/web-manage/section-list/{authId}")
-    public ResponseEntity<?> getUserSectionList( @PathVariable("authId") String authId ){
-        WebSectionListResponse webSectionListResponse = webManagementService.getUserSectionList(authId);
-        return ResponseEntity.ok(webSectionListResponse);
+    public ResponseEntity<?> getUserSectionListById( @PathVariable("authId") String authId ){
+        WebUpdateSectionResponse webUpdateSectionResponse = webManagementService.getUserSectionListById(authId);
+        return ResponseEntity.ok(webUpdateSectionResponse);
     }
 
-    //update
 
 }

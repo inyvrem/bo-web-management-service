@@ -8,24 +8,24 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name="web_hero_content")
+@Table(name="web_portfolio_content")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WebHeroContent implements Serializable {
+public class WebPortfolioContent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
-    private UUID webHeroId;
+    private UUID webPortfolioId;
 
     @Column(name = "image_url")
     private String imageUrl;
@@ -53,5 +53,8 @@ public class WebHeroContent implements Serializable {
 
     @Column(name = "user_web_id")
     private UUID userWebId;
+
+    @OneToMany(mappedBy = "webPortfolioContent")
+    private List<SubPortfolioContent> subPortfolioContent;
 
 }
