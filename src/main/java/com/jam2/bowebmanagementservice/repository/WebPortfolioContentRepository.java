@@ -1,6 +1,5 @@
 package com.jam2.bowebmanagementservice.repository;
 
-import com.jam2.bowebmanagementservice.entity.WebAboutContent;
 import com.jam2.bowebmanagementservice.entity.WebPortfolioContent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,7 +14,5 @@ public interface WebPortfolioContentRepository extends JpaRepository<WebPortfoli
     WebPortfolioContent findByWebPortfolioId(UUID webPortfolioId);
 
     WebPortfolioContent findByWebPortfolioIdAndSectionStatus(UUID webPortfolioId, Integer sectionStatus);
-
-
 
 }

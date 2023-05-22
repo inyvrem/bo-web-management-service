@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -16,6 +17,7 @@ public class WebHeroContentResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private UUID webHeroId;
     private String imageUrl;
     private String title;
     private String description;

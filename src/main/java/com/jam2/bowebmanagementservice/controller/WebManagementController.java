@@ -47,8 +47,8 @@ public class WebManagementController {
         return ResponseEntity.ok(webUpdateSectionResponse);
     }
 
-    @GetMapping(value ="/admin/web-manage/section-list/{authId}")
-    public ResponseEntity<?> getUserSectionListById( @PathVariable("authId") String authId ){
+    @GetMapping(value ="/public/web-manage/section-list/{authId}")
+    public ResponseEntity<?> getUserSectionListByAuthId( @PathVariable("authId") String authId ){
         WebUpdateSectionResponse webUpdateSectionResponse = webManagementService.getUserSectionListById(authId);
         return ResponseEntity.ok(webUpdateSectionResponse);
     }

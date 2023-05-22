@@ -1,11 +1,9 @@
 package com.jam2.bowebmanagementservice.service;
 
-import com.jam2.bowebmanagementservice.constant.SystemConstants;
 import com.jam2.bowebmanagementservice.entity.WebHeroContent;
 import com.jam2.bowebmanagementservice.model.WebHeroContentRequest;
 import com.jam2.bowebmanagementservice.model.WebHeroContentResponse;
 import com.jam2.bowebmanagementservice.model.WebIdResponse;
-import com.jam2.bowebmanagementservice.repository.UserWebRelationRepository;
 import com.jam2.bowebmanagementservice.repository.WebHeroContentRepository;
 import com.jam2.bowebmanagementservice.util.DateTimeUtil;
 import com.jam2.bowebmanagementservice.util.StringCheckUtil;

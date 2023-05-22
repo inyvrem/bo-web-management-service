@@ -186,19 +186,19 @@ public class WebManagementService {
         HashMap<String,Object> sectionList = new HashMap<>();
         if(null != webHeroContent) {
             WebHeroContentResponse webHeroContentResponse = new WebHeroContentResponse();
-            BeanUtils.copyProperties(webHeroContentResponse,webHeroContent);
+            BeanUtils.copyProperties(webHeroContent,webHeroContentResponse);
             sectionList.put("webHeroContent", webHeroContentResponse);
         }
 
         if(null != webAboutContent) {
             WebAboutContentResponse webAboutContentResponse = new WebAboutContentResponse();
-            BeanUtils.copyProperties(webAboutContentResponse,webAboutContent);
+            BeanUtils.copyProperties(webAboutContent, webAboutContentResponse);
             sectionList.put("webAboutContent", webAboutContentResponse);
         }
 
         if(null != webPortfolioContent) {
             WebPortfolioContentResponse webPortfolioContentResponse = new WebPortfolioContentResponse();
-            BeanUtils.copyProperties(webPortfolioContentResponse,webPortfolioContentResponse);
+            BeanUtils.copyProperties(webPortfolioContent,webPortfolioContentResponse);
             sectionList.put("webPortfolioContent", webPortfolioContentResponse);
         }
 

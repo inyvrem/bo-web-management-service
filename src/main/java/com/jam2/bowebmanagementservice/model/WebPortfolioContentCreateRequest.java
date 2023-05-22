@@ -6,18 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubPortfolioContentResponse implements Serializable {
+public class WebPortfolioContentCreateRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private UUID subPortfolioId;
+    private String webPortfolioId;
     private String imageUrl;
     private String title;
     private String description;
+    private List<SubPortfolioContentCreateRequest> subPortfolioContents;
 }

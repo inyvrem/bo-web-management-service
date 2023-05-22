@@ -1,13 +1,9 @@
 package com.jam2.bowebmanagementservice.controller;
 
-import com.jam2.bowebmanagementservice.model.WebHeroContentResponse;
-import com.jam2.bowebmanagementservice.model.WebIdResponse;
-import com.jam2.bowebmanagementservice.service.WebHeroContentService;
+import com.jam2.bowebmanagementservice.model.*;
+import com.jam2.bowebmanagementservice.service.WebPortfolioContentService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value ="back-office")
@@ -25,29 +21,41 @@ public class WebPortfolioController {
      *
      */
 
-//    private final WebHeroContentService webHeroContentService;
-//
-//    public WebPortfolioController(WebHeroContentService webHeroContentService) {
-//        this.webHeroContentService = webHeroContentService;
-//    }
-//
-//    @GetMapping(value ="/public/web-manage/web-hero/{userWebId}")
-//    public ResponseEntity<?> getWebHeroId(@PathVariable("userWebId") String userWebId ){
-//        WebIdResponse webIdResponse = webHeroContentService.getWebHeroId(userWebId);
-//        return ResponseEntity.ok(webIdResponse);
-//    }
-//
-//    @GetMapping(value ="/admin/web-manage/web-hero/details/{webHeroId}")
-//    public ResponseEntity<?> getWebHeroDetails(@PathVariable("webHeroId") String webHeroId ){
-//        WebHeroContentResponse webHeroContentResponse = webHeroContentService.getUserWebDetail(webHeroId);
-//        return ResponseEntity.ok(webHeroContentResponse);
-//    }
+    private final WebPortfolioContentService webPortfolioContentService;
 
-//    @PostMapping(value ="/secure/web-manage/web-hero/details/create")
-//    public ResponseEntity<?> createWebHeroDetails( @RequestBody WebHeroContentRequest webHeroContentRequest){
-//        WebHeroContentResponse webHeroContentResponse = webHeroContentService.createUserDetail(webHeroContentRequest);
-//        return ResponseEntity.ok(userDetailResponse);
-//    }
+    public WebPortfolioController(WebPortfolioContentService webPortfolioContentService) {
+        this.webPortfolioContentService = webPortfolioContentService;
+    }
+
+    @GetMapping(value ="/public/web-manage/web-portfolio/{userWebId}")
+    public ResponseEntity<?> getWebPortfolioId(@PathVariable("userWebId") String userWebId ){
+        WebIdResponse webIdResponse = webPortfolioContentService.getWebPortfolioId(userWebId);
+        return ResponseEntity.ok(webIdResponse);
+    }
+
+    @GetMapping(value ="/admin/web-manage/web-portfolio/details/{webPortfolioId}")
+    public ResponseEntity<?> getWebPortfolioDetails(@PathVariable("webPortfolioId") String webPortfolioId ){
+        WebPortfolioContentResponse webPortfolioContentResponse = webPortfolioContentService.getWebPortfolioContentDetail(webPortfolioId);
+        return ResponseEntity.ok(webPortfolioContentResponse);
+    }
+
+    @PostMapping(value ="/secure/web-manage/web-portfolio/details/update")
+    public ResponseEntity<?> updateWebPortfolioDetails( @RequestBody WebPortfolioContentCreateRequest webPortfolioContentRequest){
+        WebPortfolioContentCreateResponse webPortfolioContentResponse = webPortfolioContentService.updateWebPortfolioContentDetail(webPortfolioContentRequest);
+        return ResponseEntity.ok(webPortfolioContentResponse);
+    }
+
+    @PostMapping(value ="/secure/web-manage/web-portfolio/sub-portfolio/update")
+    public ResponseEntity<?> updateSubPortfolioContentDetail( @RequestBody SubPortfolioContentRequest subPortfolioContentRequest){
+        SubPortfolioContentResponse subPortfolioContentResponse = webPortfolioContentService.updateSubPortfolioContentDetail(subPortfolioContentRequest);
+        return ResponseEntity.ok(subPortfolioContentResponse);
+    }
+
+    @PatchMapping(value ="/secure/web-manage/web-portfolio/sub-portfolio/delete/{subPortfolioId}")
+    public ResponseEntity<?> deleteSubPortfolioContentDetail( @PathVariable("subPortfolioId") String subPortfolioId){
+         webPortfolioContentService.deleteSubPortfolioContentDetail(subPortfolioId);
+        return ResponseEntity.ok("Deleted");
+    }
 
 
 }
