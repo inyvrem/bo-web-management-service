@@ -12,19 +12,20 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name="sub_portfolio_content")
+@Table(name="sub_about_content")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubPortfolioContent implements Serializable {
+public class SubAboutContent implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
-    private UUID subPortfolioId;
+    private UUID subAboutId;
 
     @Column(name = "image_url")
     private String imageUrl;
@@ -38,7 +39,7 @@ public class SubPortfolioContent implements Serializable {
     @Column(name = "section_status")
     private Integer sectionStatus;
 
-    @Column(name = "section_position ")
+    @Column(name = "section_position")
     private Integer sectionPosition;
 
     @Column(name = "created_by")
@@ -54,7 +55,6 @@ public class SubPortfolioContent implements Serializable {
     private Date updatedDate;
 
     @ManyToOne
-    @JoinColumn(name="web_portfolio_id")
-    private WebPortfolioContent webPortfolioContent;
-
+    @JoinColumn(name="web_about_id")
+    private WebAboutContent webAboutContent;
 }

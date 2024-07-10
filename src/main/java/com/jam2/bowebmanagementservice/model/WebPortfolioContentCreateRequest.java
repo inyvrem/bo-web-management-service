@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,8 +18,7 @@ public class WebPortfolioContentCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String webPortfolioId;
-    private String imageUrl;
+    private MultipartFile imageUrl;
     private String title;
     private String description;
-    private List<SubPortfolioContentCreateRequest> subPortfolioContents;
 }

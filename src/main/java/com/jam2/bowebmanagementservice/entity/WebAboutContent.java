@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -52,5 +53,8 @@ public class WebAboutContent implements Serializable {
 
     @Column(name = "user_web_id")
     private UUID userWebId;
+
+    @OneToMany(mappedBy = "webAboutContent")
+    private List<SubAboutContent> subAboutContent;
 
 }

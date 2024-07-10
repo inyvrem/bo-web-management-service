@@ -12,12 +12,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubPortfolioContentRequest implements Serializable {
+public class SubAboutContentRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String subPortfolioId;
-    private MultipartFile imageUrl;
+    private String subAboutId;
+    private String imageUrl;
     private String title;
     private String description;
 }

@@ -4,20 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubPortfolioContentRequest implements Serializable {
+public class SubAboutContentResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String subPortfolioId;
-    private MultipartFile imageUrl;
+    private UUID subAboutId;
+    private String imageUrl;
     private String title;
     private String description;
 }

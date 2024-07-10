@@ -1,6 +1,5 @@
 package com.jam2.bowebmanagementservice.model;
 
-import com.jam2.bowebmanagementservice.entity.SubPortfolioContent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

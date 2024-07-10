@@ -6,11 +6,13 @@ import com.jam2.bowebmanagementservice.entity.*;
 import com.jam2.bowebmanagementservice.model.*;
 import com.jam2.bowebmanagementservice.repository.*;
 import com.jam2.bowebmanagementservice.util.DateTimeUtil;
-import com.jam2.bowebmanagementservice.util.StringCheckUtil;
+import com.jam2.bowebmanagementservice.util.RawStringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,21 +22,26 @@ public class WebManagementService {
     private final AuthAccountRepository authAccountRepository;
     private final WebHeroContentRepository webHeroContentRepository;
     private final WebAboutContentRepository webAboutContentRepository;
+    private final SubAboutContentRepository subAboutContentRepository;
     private final WebPortfolioContentRepository webPortfolioContentRepository;
+    private final SubPortfolioContentRepository subPortfolioContentRepository;
 
     private final DateTimeUtil dateTimeUtil;
-    private final StringCheckUtil stringCheckUtil;
+    private final RawStringUtil rawStringUtil;
 
     public WebManagementService(UserWebRelationRepository userWebRelationRepository, AuthAccountRepository authAccountRepository,
                                 WebHeroContentRepository webHeroContentRepository, WebAboutContentRepository webAboutContentRepository,
-                                WebPortfolioContentRepository webPortfolioContentRepository, DateTimeUtil dateTimeUtil, StringCheckUtil stringCheckUtil) {
+                                SubAboutContentRepository subAboutContentRepository, WebPortfolioContentRepository webPortfolioContentRepository,
+                                SubPortfolioContentRepository subPortfolioContentRepository, DateTimeUtil dateTimeUtil, RawStringUtil rawStringUtil) {
         this.userWebRelationRepository = userWebRelationRepository;
         this.authAccountRepository = authAccountRepository;
         this.webHeroContentRepository = webHeroContentRepository;
         this.webAboutContentRepository = webAboutContentRepository;
+        this.subAboutContentRepository = subAboutContentRepository;
         this.webPortfolioContentRepository = webPortfolioContentRepository;
+        this.subPortfolioContentRepository = subPortfolioContentRepository;
         this.dateTimeUtil = dateTimeUtil;
-        this.stringCheckUtil =stringCheckUtil;
+        this.rawStringUtil = rawStringUtil;
     }
 
     public WebIdResponse getUserWebId(String authId){
@@ -53,7 +60,7 @@ public class WebManagementService {
      *1st step to create the based relationship
      *
      */
-    public UserWebIdResponse createUserWebRelation(String authId){
+    public UserWebIdResponse  createUserWebRelation(String authId){
         UserWebRelation userWebRelation = new UserWebRelation();
         AuthAccount authAccount = authAccountRepository.findByAuthId(UUID.fromString(authId));
 
@@ -77,7 +84,7 @@ public class WebManagementService {
      */
     public WebCreateSectionResponse createSectionList(WebCreateSectionRequest webCreateSectionRequest){
         UserWebRelation userWebRelation = userWebRelationRepository.findByUserWebId(UUID.fromString(webCreateSectionRequest.getUserWebId()));
-
+//    optional
         if (null == userWebRelation){
 //            throw
         }
@@ -93,23 +100,9 @@ public class WebManagementService {
         userWebRelationRepository.save(userWebRelation);
 
         HashMap<String,Object> sectionList = new HashMap<>();
-        if(SectionStatusEnum.ACTIVE.getStatusCode() == webHeroContent.getSectionStatus()) {
-            WebHeroContentResponse webHeroContentResponse = new WebHeroContentResponse();
-            BeanUtils.copyProperties(webHeroContentResponse,webHeroContent);
-            sectionList.put("webHeroContent", webHeroContentResponse);
-        }
 
-        if(SectionStatusEnum.ACTIVE.getStatusCode() == webAboutContent.getSectionStatus()) {
-            WebAboutContentResponse webAboutContentResponse = new WebAboutContentResponse();
-            BeanUtils.copyProperties(webAboutContentResponse,webAboutContent);
-            sectionList.put("webAboutContent", webAboutContentResponse);
-        }
+        sectionList.put("status", "Create successfully");
 
-        if(SectionStatusEnum.ACTIVE.getStatusCode() == webPortfolioContent.getSectionStatus()) {
-            WebPortfolioContentResponse webPortfolioContentResponse = new WebPortfolioContentResponse();
-            BeanUtils.copyProperties(webPortfolioContentResponse,webPortfolioContentResponse);
-            sectionList.put("webPortfolioContent", webPortfolioContentResponse);
-        }
 
         return WebCreateSectionResponse.builder()
                 .authId(userWebRelation.getAuthAccount().getAuthId().toString())
@@ -131,28 +124,13 @@ public class WebManagementService {
             //throw
         }
 
-        WebHeroContent webHeroContent = webHeroContentRelationChecking(webUpdateSectionRequest, userWebRelation);
-        WebAboutContent webAboutContent = webAboutContentRelationChecking(webUpdateSectionRequest,userWebRelation);
-        WebPortfolioContent webPortfolioContent= webPortfolioContentRelationChecking(webUpdateSectionRequest,userWebRelation);
+        webHeroContentRelationChecking(webUpdateSectionRequest, userWebRelation);
+        webAboutContentRelationChecking(webUpdateSectionRequest,userWebRelation);
+        webPortfolioContentRelationChecking(webUpdateSectionRequest,userWebRelation);
 
         HashMap<String,Object> sectionList = new HashMap<>();
-        if(SectionStatusEnum.ACTIVE.getStatusCode() == webHeroContent.getSectionStatus()) {
-            WebHeroContentResponse webHeroContentResponse = new WebHeroContentResponse();
-            BeanUtils.copyProperties(webHeroContentResponse,webHeroContent);
-            sectionList.put("webHeroContent", webHeroContentResponse);
-        }
 
-        if(SectionStatusEnum.ACTIVE.getStatusCode() == webAboutContent.getSectionStatus()) {
-            WebAboutContentResponse webAboutContentResponse = new WebAboutContentResponse();
-            BeanUtils.copyProperties(webAboutContentResponse,webAboutContent);
-            sectionList.put("webAboutContent", webAboutContentResponse);
-        }
-
-        if(SectionStatusEnum.ACTIVE.getStatusCode() == webPortfolioContent.getSectionStatus()) {
-            WebPortfolioContentResponse webPortfolioContentResponse = new WebPortfolioContentResponse();
-            BeanUtils.copyProperties(webPortfolioContentResponse,webPortfolioContentResponse);
-            sectionList.put("webPortfolioContent", webPortfolioContentResponse);
-        }
+        sectionList.put("status", "update successfully");
 
         return WebUpdateSectionResponse.builder()
                 .authId(userWebRelation.getAuthAccount().getAuthId().toString())
@@ -174,6 +152,7 @@ public class WebManagementService {
             //throw
         }
 
+        //optional
         UserWebRelation userWebRelation = userWebRelationRepository.findByAuthAccountAuthId(UUID.fromString(authId));
         if(null == userWebRelation){
             // throw
@@ -192,13 +171,33 @@ public class WebManagementService {
 
         if(null != webAboutContent) {
             WebAboutContentResponse webAboutContentResponse = new WebAboutContentResponse();
+            List<SubAboutContentResponse> subAboutContentResponseList = new ArrayList<>();
+            List<SubAboutContent> subAboutContents = subAboutContentRepository.findByWebAboutContentWebAboutId(webAboutContent.getWebAboutId());
             BeanUtils.copyProperties(webAboutContent, webAboutContentResponse);
+            if(subAboutContents.size() > 0){
+                for(SubAboutContent aboutContent : subAboutContents){
+                    SubAboutContentResponse response = new SubAboutContentResponse();
+                    BeanUtils.copyProperties(aboutContent,response);
+                    subAboutContentResponseList.add(response);
+                }
+            }
+            webAboutContentResponse.setSubAboutContent(subAboutContentResponseList);
             sectionList.put("webAboutContent", webAboutContentResponse);
         }
 
         if(null != webPortfolioContent) {
             WebPortfolioContentResponse webPortfolioContentResponse = new WebPortfolioContentResponse();
+            List<SubPortfolioContentResponse> subPortfolioContentResponseList = new ArrayList<>();
+            List<SubPortfolioContent> subPortfolioContent = subPortfolioContentRepository.findByWebPortfolioContentWebPortfolioId(webPortfolioContent.getWebPortfolioId());
             BeanUtils.copyProperties(webPortfolioContent,webPortfolioContentResponse);
+            if(subPortfolioContent.size() > 0){
+                for(SubPortfolioContent portfolioContent : subPortfolioContent){
+                    SubPortfolioContentResponse response = new SubPortfolioContentResponse();
+                    BeanUtils.copyProperties(portfolioContent,response);
+                    subPortfolioContentResponseList.add(response);
+                }
+            }
+            webPortfolioContentResponse.setSubPortfolioContents(subPortfolioContentResponseList);
             sectionList.put("webPortfolioContent", webPortfolioContentResponse);
         }
 
@@ -221,60 +220,35 @@ public class WebManagementService {
      */
     private WebHeroContent webHeroContentRelationChecking(WebUpdateSectionRequest webUpdateSectionRequest, UserWebRelation userWebRelation){
         WebHeroContent webHeroContent = webHeroContentRepository.findByWebHeroId(userWebRelation.getWebHeroId());
-
-      if (webUpdateSectionRequest.getIsWebHeroContentNeeded()){
-          webHeroContent.setSectionStatus(SectionStatusEnum.ACTIVE.getStatusCode());
-          webHeroContent.setUpdatedBy(SystemConstants.SYSTEM);
-          webHeroContent.setUpdatedDate(dateTimeUtil.now());
-          webHeroContentRepository.save(webHeroContent);
-       } else {
-           webHeroContent.setSectionStatus(SectionStatusEnum.INACTIVE.getStatusCode());
-           webHeroContent.setUpdatedBy(SystemConstants.SYSTEM);
-           webHeroContent.setUpdatedDate(dateTimeUtil.now());
-           webHeroContentRepository.save(webHeroContent);
-       }
+        webHeroContent.setSectionStatus(webUpdateSectionRequest.getIsWebHeroContentNeeded() ? SectionStatusEnum.ACTIVE.getStatusCode() : SectionStatusEnum.INACTIVE.getStatusCode());
+        webHeroContent.setUpdatedBy(SystemConstants.SYSTEM);
+        webHeroContent.setUpdatedDate(dateTimeUtil.now());
+        webHeroContentRepository.save(webHeroContent);
 
         return webHeroContent;
     }
 
     private WebAboutContent webAboutContentRelationChecking(WebUpdateSectionRequest webUpdateSectionRequest, UserWebRelation userWebRelation){
         WebAboutContent webAboutContent = webAboutContentRepository.findByWebAboutId(userWebRelation.getWebAboutId());
-
-        if(webUpdateSectionRequest.getIsWebAboutContentNeeded()){
-            webAboutContent.setSectionStatus(SectionStatusEnum.ACTIVE.getStatusCode());
-            webAboutContent.setCreatedBy(SystemConstants.SYSTEM);
-            webAboutContent.setCreatedDate(dateTimeUtil.now());
-            webAboutContentRepository.save(webAboutContent);
-        } else{
-            webAboutContent.setSectionStatus(SectionStatusEnum.INACTIVE.getStatusCode());
-            webAboutContent.setUpdatedBy(SystemConstants.SYSTEM);
-            webAboutContent.setUpdatedDate(dateTimeUtil.now());
-            webAboutContentRepository.save(webAboutContent);
-        }
+        webAboutContent.setSectionStatus(webUpdateSectionRequest.getIsWebAboutContentNeeded() ? SectionStatusEnum.ACTIVE.getStatusCode() : SectionStatusEnum.INACTIVE.getStatusCode());
+        webAboutContent.setCreatedBy(SystemConstants.SYSTEM);
+        webAboutContent.setCreatedDate(dateTimeUtil.now());
+        webAboutContentRepository.save(webAboutContent);
 
         return webAboutContent;
     }
 
     private WebPortfolioContent webPortfolioContentRelationChecking(WebUpdateSectionRequest webUpdateSectionRequest, UserWebRelation userWebRelation){
         WebPortfolioContent webPortfolioContent = webPortfolioContentRepository.findByWebPortfolioId(userWebRelation.getWebPortfolioId());
-
-        if(webUpdateSectionRequest.getIsWebPortfolioContentNeeded()){
-            webPortfolioContent.setSectionStatus(SectionStatusEnum.ACTIVE.getStatusCode());
-            webPortfolioContent.setCreatedBy(SystemConstants.SYSTEM);
-            webPortfolioContent.setCreatedDate(dateTimeUtil.now());
-            webPortfolioContentRepository.save(webPortfolioContent);
-        }else {
-            webPortfolioContent.setSectionStatus(SectionStatusEnum.INACTIVE.getStatusCode());
-            webPortfolioContent.setUpdatedBy(SystemConstants.SYSTEM);
-            webPortfolioContent.setUpdatedDate(dateTimeUtil.now());
-            webPortfolioContentRepository.save(webPortfolioContent);
-        }
+        webPortfolioContent.setSectionStatus(webUpdateSectionRequest.getIsWebPortfolioContentNeeded() ? SectionStatusEnum.ACTIVE.getStatusCode() : SectionStatusEnum.INACTIVE.getStatusCode());
+        webPortfolioContent.setCreatedBy(SystemConstants.SYSTEM);
+        webPortfolioContent.setCreatedDate(dateTimeUtil.now());
+        webPortfolioContentRepository.save(webPortfolioContent);
 
         return webPortfolioContent;
     }
 
     /**
-     *
      * Create Content
      */
 
