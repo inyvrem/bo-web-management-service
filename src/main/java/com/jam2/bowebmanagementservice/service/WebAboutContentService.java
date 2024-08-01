@@ -2,9 +2,7 @@ package com.jam2.bowebmanagementservice.service;
 
 import com.jam2.bowebmanagementservice.constant.SectionStatusEnum;
 import com.jam2.bowebmanagementservice.entity.SubAboutContent;
-import com.jam2.bowebmanagementservice.entity.SubPortfolioContent;
 import com.jam2.bowebmanagementservice.entity.WebAboutContent;
-import com.jam2.bowebmanagementservice.entity.WebPortfolioContent;
 import com.jam2.bowebmanagementservice.model.*;
 import com.jam2.bowebmanagementservice.repository.SubAboutContentRepository;
 import com.jam2.bowebmanagementservice.repository.WebAboutContentRepository;

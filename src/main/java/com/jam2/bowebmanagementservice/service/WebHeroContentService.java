@@ -6,10 +6,12 @@ import com.jam2.bowebmanagementservice.model.WebHeroContentResponse;
 import com.jam2.bowebmanagementservice.model.WebIdResponse;
 import com.jam2.bowebmanagementservice.repository.WebHeroContentRepository;
 import com.jam2.bowebmanagementservice.util.DateTimeUtil;
-import com.jam2.bowebmanagementservice.util.StringCheckUtil;
+import com.jam2.bowebmanagementservice.util.ImageUtil;
+import com.jam2.bowebmanagementservice.util.RawStringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -24,12 +26,15 @@ public class WebHeroContentService {
 
     private final WebHeroContentRepository webHeroContentRepository;
     private final DateTimeUtil dateTimeUtil;
-    private final StringCheckUtil stringCheckUtil;
+    private final RawStringUtil stringCheckUtil;
+    private final ImageUtil imageUtil;
 
-    public WebHeroContentService(WebHeroContentRepository webHeroContentRepository, DateTimeUtil dateTimeUtil, StringCheckUtil stringCheckUtil) {
+    public WebHeroContentService(WebHeroContentRepository webHeroContentRepository, DateTimeUtil dateTimeUtil,
+                                 RawStringUtil stringCheckUtil, ImageUtil imageUtil) {
         this.webHeroContentRepository = webHeroContentRepository;
         this.dateTimeUtil = dateTimeUtil;
         this.stringCheckUtil = stringCheckUtil;
+        this.imageUtil = imageUtil;
     }
 
     public WebIdResponse getWebHeroId(String userWebId){
@@ -49,6 +54,8 @@ public class WebHeroContentService {
 
         if(null != webHeroContent){
             BeanUtils.copyProperties(webHeroContent,resp);
+            String url = imageUtil.modifiedPath(webHeroContent.getImageUrl());
+            resp.setImageUrl(url);
         }
 
         return resp;
@@ -62,9 +69,22 @@ public class WebHeroContentService {
            // throw
         }
 
+        String imagePath = "";
+
+//        try {
+//            if (null != webHeroContentRequest.getImageUrl()) {
+//                imagePath = imageUtil.saveImage(webHeroContentRequest.getImageUrl());
+//            } else {
+//                imagePath = webHeroContent.getImageUrl();
+//            }
+//        }
+//        catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
         webHeroContent.setTitle(stringCheckUtil.isStringNEB(webHeroContentRequest.getTitle()) ? webHeroContent.getTitle() : webHeroContentRequest.getTitle());
         webHeroContent.setDescription(stringCheckUtil.isStringNEB(webHeroContentRequest.getDescription()) ? webHeroContent.getDescription(): webHeroContentRequest.getDescription());
-        webHeroContent.setImageUrl( stringCheckUtil.isStringNEB(webHeroContentRequest.getImageUrl()) ? webHeroContent.getImageUrl() : webHeroContentRequest.getImageUrl());
+        webHeroContent.setImageUrl(imagePath);
         webHeroContent.setUpdatedBy("user"); // add token user
         webHeroContent.setUpdatedDate(dateTimeUtil.now());
         webHeroContentRepository.save(webHeroContent);

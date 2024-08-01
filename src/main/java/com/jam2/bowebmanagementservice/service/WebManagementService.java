@@ -25,14 +25,19 @@ public class WebManagementService {
     private final SubAboutContentRepository subAboutContentRepository;
     private final WebPortfolioContentRepository webPortfolioContentRepository;
     private final SubPortfolioContentRepository subPortfolioContentRepository;
+    private final WebClientContentRepository webClientContentRepository;
+    private final SubClientContentRepository subClientContentRepository;
+
 
     private final DateTimeUtil dateTimeUtil;
     private final RawStringUtil rawStringUtil;
 
-    public WebManagementService(UserWebRelationRepository userWebRelationRepository, AuthAccountRepository authAccountRepository,
-                                WebHeroContentRepository webHeroContentRepository, WebAboutContentRepository webAboutContentRepository,
-                                SubAboutContentRepository subAboutContentRepository, WebPortfolioContentRepository webPortfolioContentRepository,
-                                SubPortfolioContentRepository subPortfolioContentRepository, DateTimeUtil dateTimeUtil, RawStringUtil rawStringUtil) {
+    public WebManagementService(UserWebRelationRepository userWebRelationRepository,
+                                AuthAccountRepository authAccountRepository, WebHeroContentRepository webHeroContentRepository,
+                                WebAboutContentRepository webAboutContentRepository, SubAboutContentRepository subAboutContentRepository,
+                                WebPortfolioContentRepository webPortfolioContentRepository, SubPortfolioContentRepository subPortfolioContentRepository,
+                                WebClientContentRepository webClientContentRepository, SubClientContentRepository subClientContentRepository,
+                                DateTimeUtil dateTimeUtil, RawStringUtil rawStringUtil) {
         this.userWebRelationRepository = userWebRelationRepository;
         this.authAccountRepository = authAccountRepository;
         this.webHeroContentRepository = webHeroContentRepository;
@@ -40,6 +45,8 @@ public class WebManagementService {
         this.subAboutContentRepository = subAboutContentRepository;
         this.webPortfolioContentRepository = webPortfolioContentRepository;
         this.subPortfolioContentRepository = subPortfolioContentRepository;
+        this.webClientContentRepository = webClientContentRepository;
+        this.subClientContentRepository = subClientContentRepository;
         this.dateTimeUtil = dateTimeUtil;
         this.rawStringUtil = rawStringUtil;
     }
@@ -92,10 +99,12 @@ public class WebManagementService {
         WebHeroContent webHeroContent = createWebHeroContent(webCreateSectionRequest);
         WebAboutContent webAboutContent = createWebAboutContent(webCreateSectionRequest);
         WebPortfolioContent webPortfolioContent = createWebPortfolioContent(webCreateSectionRequest);
+        WebClientContent webClientContent = createWebClientContent(webCreateSectionRequest);
 
         userWebRelation.setWebHeroId(webHeroContent.getWebHeroId());
         userWebRelation.setWebAboutId(webAboutContent.getWebAboutId());
         userWebRelation.setWebPortfolioId(webPortfolioContent.getWebPortfolioId());
+        userWebRelation.setWebClientId(webClientContent.getWebClientId());
 
         userWebRelationRepository.save(userWebRelation);
 
@@ -127,6 +136,7 @@ public class WebManagementService {
         webHeroContentRelationChecking(webUpdateSectionRequest, userWebRelation);
         webAboutContentRelationChecking(webUpdateSectionRequest,userWebRelation);
         webPortfolioContentRelationChecking(webUpdateSectionRequest,userWebRelation);
+        webClientContentRelationChecking(webUpdateSectionRequest,userWebRelation);
 
         HashMap<String,Object> sectionList = new HashMap<>();
 
@@ -161,6 +171,7 @@ public class WebManagementService {
         WebHeroContent webHeroContent = webHeroContentRepository.findByWebHeroIdAndSectionStatus(userWebRelation.getWebHeroId(),SectionStatusEnum.ACTIVE.getStatusCode());
         WebAboutContent webAboutContent = webAboutContentRepository.findByWebAboutIdAndSectionStatus(userWebRelation.getWebAboutId(),SectionStatusEnum.ACTIVE.getStatusCode());
         WebPortfolioContent webPortfolioContent = webPortfolioContentRepository.findByWebPortfolioIdAndSectionStatus(userWebRelation.getWebPortfolioId(),SectionStatusEnum.ACTIVE.getStatusCode());
+        WebClientContent webClientContent= webClientContentRepository.findByWebClientIdAndSectionStatus(userWebRelation.getWebPortfolioId(),SectionStatusEnum.ACTIVE.getStatusCode());
 
         HashMap<String,Object> sectionList = new HashMap<>();
         if(null != webHeroContent) {
@@ -199,6 +210,22 @@ public class WebManagementService {
             }
             webPortfolioContentResponse.setSubPortfolioContents(subPortfolioContentResponseList);
             sectionList.put("webPortfolioContent", webPortfolioContentResponse);
+        }
+
+        if(null != webClientContent) {
+            WebClientContentResponse webClientContentResponse = new WebClientContentResponse();
+            List<SubClientContentResponse> subClientContentResponseList = new ArrayList<>();
+            List<SubClientContent> subClientContents = subClientContentRepository.findByWebClientContentWebClientId(webClientContent.getWebClientId());
+            BeanUtils.copyProperties(webClientContent,webClientContentResponse);
+            if(subClientContents.size() > 0){
+                for(SubClientContent clientContent : subClientContents){
+                    SubClientContentResponse response = new SubClientContentResponse();
+                    BeanUtils.copyProperties(clientContent,response);
+                    subClientContentResponseList.add(response);
+                }
+            }
+            webClientContentResponse.setSubClientContents(subClientContentResponseList);
+            sectionList.put("webClientContent", webClientContentResponse);
         }
 
         return WebUpdateSectionResponse.builder()
@@ -248,6 +275,16 @@ public class WebManagementService {
         return webPortfolioContent;
     }
 
+    private WebClientContent webClientContentRelationChecking(WebUpdateSectionRequest webUpdateSectionRequest, UserWebRelation userWebRelation){
+        WebClientContent webClientContent = webClientContentRepository.findByWebClientId(userWebRelation.getWebClientId());
+        webClientContent.setSectionStatus(webUpdateSectionRequest.getIsWebClientContentNeeded() ? SectionStatusEnum.ACTIVE.getStatusCode() : SectionStatusEnum.INACTIVE.getStatusCode());
+        webClientContent.setCreatedBy(SystemConstants.SYSTEM);
+        webClientContent.setCreatedDate(dateTimeUtil.now());
+        webClientContentRepository.save(webClientContent);
+
+        return webClientContent;
+    }
+
     /**
      * Create Content
      */
@@ -286,6 +323,18 @@ public class WebManagementService {
         webPortfolioContentRepository.save(webPortfolioContent);
 
         return webPortfolioContent;
+    }
+
+    private WebClientContent createWebClientContent(WebCreateSectionRequest webCreateSectionRequest){
+        WebClientContent webClientContent = new WebClientContent();
+
+        webClientContent.setUserWebId(UUID.fromString(webCreateSectionRequest.getUserWebId()));
+        webClientContent.setSectionStatus(webCreateSectionRequest.getIsWebPortfolioContentNeeded()?SectionStatusEnum.ACTIVE.getStatusCode():SectionStatusEnum.INACTIVE.getStatusCode());
+        webClientContent.setCreatedBy(SystemConstants.SYSTEM);
+        webClientContent.setCreatedDate(dateTimeUtil.now());
+        webClientContentRepository.save(webClientContent);
+
+        return webClientContent;
     }
 }
 

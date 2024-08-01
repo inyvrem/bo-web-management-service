@@ -28,4 +28,7 @@ public class WebUpdateSectionRequest implements Serializable {
 
     @NotNull(message = " isWebServiceContentNeeded should not be blank")
     private Boolean isWebServiceContentNeeded;
+
+    @NotNull(message = " isWebServiceContentNeeded should not be blank")
+    private Boolean isWebClientContentNeeded;
 }
